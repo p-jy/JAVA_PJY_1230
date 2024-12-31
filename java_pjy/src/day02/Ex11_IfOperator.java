@@ -6,7 +6,7 @@ public class Ex11_IfOperator {
 
 	public static void main(String[] args) {
 		/*
-		 * 두 정주와 산술 연산자를 입력받는 코드를 작성하세요.
+		 * 두 정수와 산술 연산자를 입력받는 코드를 작성하세요.
 		 * 예시
 		 * 두 정수와 산술 연산자를 입력하세요. (예: 1 + 2 ) : 3 * 4
 		 * 3 * 4
@@ -42,7 +42,7 @@ public class Ex11_IfOperator {
 		} else if(operator == '%') {
 			System.out.println(num1 + " " + operator + " " + num2 + " = " + (num1 % num2));
 		} else {
-			System.out.println("잘못된 산술 연산자 입니다.");
+			System.out.println(operator + "는 잘못된 산술 연산자 입니다.");
 		}
 		//System.out.println(num1 + " " + operator + " " + num2);
 		
