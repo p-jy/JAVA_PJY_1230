@@ -11,11 +11,11 @@ public class Ex10_ForInput {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		String ch;
-		for(int i = 0; ; i++) {
+		char ch;
+		for( ; ; ) {
 			System.out.print("문자를 입력하세요 : ");
-			ch = sc.next();
-			if(ch.equals("q")) {
+			ch = sc.next().charAt(0);
+			if(ch == 'q') {
 				System.out.println("프로그램이 종료되었습니다.");
 				break;
 			}
