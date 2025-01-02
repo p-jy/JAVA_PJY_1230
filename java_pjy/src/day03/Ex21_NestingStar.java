@@ -3,6 +3,7 @@ package day03;
 public class Ex21_NestingStar {
 
 	public static void main(String[] args) {
+		int num = 5;
 		/* 
 		 * 중첩 for문 5X5 별찍기
 		 * 
@@ -13,7 +14,6 @@ public class Ex21_NestingStar {
 		 * 	- 반복문 종료 후: 엔터
 		 * 반복문 종료 후: 없음
 		 */
-		int num = 5;
 		System.out.println("중첩 for문 5X5 별찍기");
 		for(int i = 1; i <= num; i++) {
 			for(int j = 1; j <= 5; j++) {
@@ -38,6 +38,8 @@ public class Ex21_NestingStar {
 			System.out.println();
 		}
 		System.out.println();
+		
+		
 		
 		/* [별찍기 연습]
 		 *     * i=1 " "=4, *=1
