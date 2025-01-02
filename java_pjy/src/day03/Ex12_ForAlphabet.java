@@ -1,0 +1,48 @@
+package day03;
+
+public class Ex12_ForAlphabet {
+
+	public static void main(String[] args) {
+		/*
+		 * a부터 z까지 출력하는 코드를 작성하세요.
+		 * 
+		 * abcdef...xyz (26자)
+		 * 
+		 * 반복횟수: 
+		 * 규칙성: ch 출력 후 ch +1 ch가 z+1 이면 종료
+		 * 반복문 종료 후: 없음
+		 */
+		
+		char ch = 'a';
+		
+		for(; ; ) {
+			System.out.print(ch);
+			ch += 1;
+			if(ch == 'z'+1) {
+				break; //break 써야하는 예제인 줄 알고 일부러 break를 위한 코드를 짰는데 아니었다. (결론적으로 교수님 코드2와 동일한 코드임)
+			}
+		}
+		System.out.println("");
+		
+		/* [교수님 코드1]
+		 * 반복횟수: i는 0부터 26보다 작을 때까지 1씩 증가
+		 * 규칙성: (char)('a' + i)를 출력
+		 * 반복문 종료 후: 없음
+		 */
+		
+		for(int i = 0; i < 26; i++) {
+			System.out.print((char)('a' + i));
+		}
+		System.out.println("");
+		
+		/* [교수님 코드2]
+		 * 반복횟수: ch는 'a'부터 'z'까지 1씩 증가
+		 * 규칙성: ch를 출력
+		 * 반복문 종료 후: 없음
+		 */
+		
+		for(char ch1 = 'a'; ch1 <= 'z'; ch1++) {
+			System.out.print(ch1);
+		}
+	}
+}
