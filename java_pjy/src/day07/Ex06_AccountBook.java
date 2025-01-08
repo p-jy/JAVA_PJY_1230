@@ -104,6 +104,7 @@ public class Ex06_AccountBook {
 					for(int i = delete-1; i < count - 1; i++) {
 						list[i] = list[i+1];
 					}
+					
 					count--;
 					System.out.println("삭제가 완료됐습니다.");
 				} else {
@@ -146,11 +147,6 @@ class Item {
 		this.content = content;
 		this.money = money;
 		this.date = date;
-	}
-	
-	public boolean equal(int num) {
-		
-		return false;
 	}
 
 	public void print() {
