@@ -81,7 +81,15 @@ public class Ex06_AccountBook {
 				count++;
 				break;
 			case 2:
-				printList(list, count);
+				if(count == 0) { //등록된 내역이 없는 경우 안내문 출력 후 메뉴로 돌아감
+					System.out.println("등록된 내역이 없습니다.");
+					System.out.println("-----------------");
+					break;
+				}
+				for(int i = 0; i < count; i++) {
+					list[i].print(i+1);
+				}
+				System.out.println("-----------------");
 				System.out.print("수정할 내역의 번호를 입력하세요 : ");
 				int change = sc.nextInt();
 				
@@ -96,15 +104,22 @@ public class Ex06_AccountBook {
 				}
 				break;
 			case 3:
-				printList(list, count);
+				if(count == 0) { //등록된 내역이 없는 경우 예외 처리
+					System.out.println("등록된 내역이 없습니다.");
+					System.out.println("-----------------");
+					break;
+				}
+				for(int i = 0; i < count; i++) {
+					list[i].print(i+1);
+				}
+				System.out.println("-----------------");
 				System.out.print("삭제할 내역의 번호를 입력하세요 : ");
 				int delete = sc.nextInt();
 				
 				if(delete <= count) {
-					for(int i = delete-1; i < count - 1; i++) {
-						list[i] = list[i+1];
+					for(int i = delete + 1; i < count; i++) {
+						list[i-1] = list[i];
 					}
-					
 					count--;
 					System.out.println("삭제가 완료됐습니다.");
 				} else {
@@ -112,7 +127,15 @@ public class Ex06_AccountBook {
 				}
 				break;
 			case 4:
-				printList(list, count);
+				if(count == 0) { //등록된 내역이 없는 경우 예외 처리
+					System.out.println("등록된 내역이 없습니다.");
+					System.out.println("-----------------");
+					break;
+				}
+				for(int i = 0; i < count; i++) {
+					list[i].print(i+1);
+				}
+				System.out.println("-----------------");
 				break;
 			case 5:
 				System.out.println("프로그램을 종료합니다.");
@@ -123,13 +146,6 @@ public class Ex06_AccountBook {
 				System.out.println("-----------------");
 			}
 		} while (menu != 5);
-	}
-	
-	public static void printList(Item[] list, int count) {
-		for(int i = 0; i < count; i++) {
-			list[i].print(i+1);
-		}
-		System.out.println("-----------------");
 	}
 
 }
