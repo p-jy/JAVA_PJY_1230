@@ -1,7 +1,12 @@
 package homework.ex2;
 
-public class StudentMain {
+import java.text.MessageFormat;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
+public class StudentMain {
+	static Scanner sc = new Scanner(System.in);
+	
 	/* 학생 성적 관리 프로그램을 작성하세요
 	 * 1. 학생 등록
 	 * 	- 학년, 반, 번호, 이름을 입력받아 등록
@@ -47,8 +52,92 @@ public class StudentMain {
 		
 		Student tmp = new Student();
 		
-		System.out.println(tmp);
+//		System.out.println(tmp);
 		
+		int menu = 0;
+		do {
+			printMenu();
+			try {
+				menu = sc.nextInt();
+				runMenu(menu);
+			} catch(InputMismatchException e) {
+				//정수가 아닌 것을 메뉴로 입력한 경우 예외처리
+				System.out.println("메뉴의 번호를 입력해주세요.\r\n");
+				sc.nextLine();
+			} catch (Exception e) {
+				//메뉴 번호 잘못 입력한 경우 예외처리
+				System.out.println(MessageFormat.format("{0}", e.getMessage())); 
+			}
+			
+			
+		} while(menu != 13);
+		
+		
+	}
+	
+	public static void printMenu() {
+		System.out.print("메뉴\r\n"
+					+ " 1. 학생 등록\r\n"
+					+ " 2. 학생 수정\r\n"
+					+ " 3. 학생 삭제\r\n"
+					+ " 4. 과목 등록\r\n"
+					+ " 5. 과목 수정\r\n"
+					+ " 6. 과목 삭제\r\n"
+					+ " 7. 성적 등록\r\n"
+					+ " 8. 성적 수정\r\n"
+					+ " 9. 성적 삭제\r\n"
+					+ "10. 학생 조회\r\n"
+					+ "11. 과목 조회\r\n"
+					+ "12. 성적 조회\r\n"
+					+ "13. 종료\r\n"
+					+ "메뉴 입력 : ");
+		
+	}
+	
+	public static void runMenu(int menu) throws Exception {
+		switch(menu) {
+		case 1:
+			
+			break;
+		case 2:
+			
+			break;
+		case 3:
+			
+			break;
+		case 4:
+			
+			break;
+		case 5:
+			
+			break;
+		case 6:
+			
+			break;
+		case 7:
+			
+			break;
+		case 8:
+			
+			break;
+		case 9:
+			
+			break;
+		case 10:
+			
+			break;
+		case 11:
+			
+			break;
+		case 12:
+			
+			break;
+		case 13:
+			System.out.println("프로그램을 종료합니다.");
+			break;
+		default:
+			throw new Exception("올바른 메뉴가 아닙니다.\r\n");
+		}
 	}
 	
 }
