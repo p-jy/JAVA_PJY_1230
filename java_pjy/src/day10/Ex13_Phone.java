@@ -1,11 +1,12 @@
 package day10;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Ex13_Phone {
 	/* 전화번호를 관리하는 프로그램을 작성하세요.
@@ -72,104 +73,125 @@ public class Ex13_Phone {
 		
 	}
 
-	private static void searchNum() {
-		System.out.print("이름 : ");
-		String name = sc.nextLine();
-		int count = 0;
-		
-		for(Number tmp : num) {
-			if(tmp.getName().contains(name)) {
-				System.out.print(count + 1 + ". ");
-				System.out.println(tmp);
-				count++;
-			}
-		}
-		
-		if(count == 0) {
-			System.out.println("일치하는 항목이 없습니다.");
-		}
-		System.out.println("---------------------");
-		
-	}
-
-	private static void deleteNum() {
-		System.out.print("이름 : ");
-		String name = sc.nextLine();
-		int count = 0;
-		ArrayList<Integer> index = new ArrayList<Integer>();
-		
-		for(Number tmp : num) {
-			if(tmp.getName().contains(name)) {
-				System.out.print(count + 1 + ". ");
-				System.out.println(tmp);
-				int idx = num.indexOf(tmp);
-				System.out.println(idx);
-				index.add(idx);
-				count++;
-			}
-		}
-		
-		if(count == 0) {
-			System.out.println("일치하는 항목이 없습니다.");
-			return;
-		}
-		System.out.println("---------------------");
-		
-		System.out.print("삭제할 번호를 선택하세요 : ");
-		int delete = sc.nextInt();
-
-		num.remove(index.get(delete - 1));
-		System.out.println("번호를 삭제했습니다.");
-		
-	}
-
-	private static void updateNum() {
-		System.out.print("이름 : ");
-		String name = sc.nextLine();
-		int count = 0;
-		ArrayList<Integer> index = new ArrayList<Integer>();
-		
-		for(Number tmp : num) {
-			if(tmp.getName().contains(name)) {
-				System.out.print(count + 1 + ". ");
-				System.out.println(tmp);
-				int idx = num.indexOf(tmp);
-				System.out.println(idx);
-				index.add(idx);
-				count++;
-			}
-		}
-		if(count == 0) {
-			System.out.println("일치하는 항목이 없습니다.");
-			return;
-		}
-		System.out.println("---------------------");
-		
-		System.out.print("수정할 번호를 선택하세요 : ");
-		int update = sc.nextInt();
-		
-		System.out.print("수정할 번호를 입력해주세요 : ");
-		sc.nextLine();
-		String newNum = sc.nextLine();
-		
-		Number tmp = new Number(name, newNum);
-		
-		num.set(index.get(update - 1), tmp);
-		System.out.println("번호를 수정했습니다.");
-		
-	}
-
 	private static void insertNum() {
 		System.out.print("이름 : ");
 		String name = sc.nextLine();
 		System.out.print("번호 : ");
 		String number = sc.nextLine();
 		
+		//정규표현식 체크 : 000-0000-0000
+		String regex = "^\\d{2,3}(-\\d{4}){2}$";
+		
+		if(!Pattern.matches(regex, number)) {
+			System.out.println("올바른 전화번호가 아닙니다.");
+			return;
+		}
+		
 		Number n = new Number(name, number);
 		
 		num.add(n);
 		System.out.println("전화번호를 등록했습니다.");
 		
+	}
+
+	
+
+	private static void updateNum() {
+		System.out.print("이름 : ");
+		String name = sc.nextLine();
+		
+		ArrayList<Number> tmpList = searchNumberList(name);
+		
+//		for(int i = 0; i < tmpList.size(); i++) {
+//			System.out.println((i+1) + ". " + tmpList.get(i));
+//		}
+		
+		if(!printNumberList(tmpList, true)) {
+			return;
+		}
+		
+		System.out.print("수정할 번호 선택 : ");
+		int index = sc.nextInt() - 1;
+		sc.nextLine();
+		
+		Number n = tmpList.get(index);
+		
+		System.out.print("이름 : ");
+		String newName = sc.nextLine();
+		System.out.print("번호 : ");
+		String pNum = sc.nextLine();
+		
+		n.update(newName, pNum);
+		System.out.println("수정이 완료됐습니다.");
+		
+	}
+	
+	
+	
+	private static void deleteNum() {
+		System.out.print("이름 : ");
+		String name = sc.nextLine();
+		
+		ArrayList<Number> tmpList = searchNumberList(name);
+		
+//		for(int i = 0; i < tmpList.size(); i++) {
+//			System.out.println((i+1) + ". " + tmpList.get(i));
+//		}
+		
+		if(!printNumberList(tmpList, true)) {
+			return;
+		}
+		
+		System.out.print("삭제할 번호 선택 : ");
+		int index = sc.nextInt() - 1;
+		
+		Number n = tmpList.get(index);
+		
+		num.remove(n); //Objects.equals() => Object.equals
+		System.out.println("전화번호가 삭제 됐습니다.");
+				
+	}
+
+	
+	private static ArrayList<Number> searchNumberList(String name) {
+		
+		ArrayList<Number> tmpList = new ArrayList<Number>();
+		
+		for(Number tmp : num) {
+			if(tmp.getName().contains(name)) {
+				tmpList.add(tmp);
+			}
+		}
+		return tmpList;
+	}
+
+	private static void searchNum() {
+		System.out.print("이름 : ");
+		String name = sc.nextLine();
+		
+		ArrayList<Number> nList = searchNumberList(name);
+		printNumberList(nList, false);
+		
+//		for(Number tmp : num) {
+//			if(tmp.getName().contains(name)) {
+//				System.out.println(tmp);
+//			}
+//		}
+		
+	}
+	
+	private static boolean printNumberList(ArrayList<Number> nList, boolean isNumber) {
+		if(nList == null || nList.size() == 0) {
+			System.out.println("결과가 없습니다.");
+			return false;
+		}
+		for(int i = 0; i < nList.size(); i++) {
+			if(isNumber) {
+				System.out.print(i + 1 + ". ");
+			}
+			System.out.println(nList.get(i));
+		}
+		return true;
 	}
 
 	private static void printMenu() {
@@ -186,7 +208,8 @@ public class Ex13_Phone {
 
 }
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 class Number {
 	private String name, number;
@@ -196,17 +219,9 @@ class Number {
 		return name + " : " + number;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Number other = (Number) obj;
-		return Objects.equals(name, other.name);
+	public void update(String newName, String pNum) {
+		this.name = newName;
+		this.number = pNum;
+		
 	}
-	
-	
 }
