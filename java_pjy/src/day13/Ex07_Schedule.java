@@ -284,9 +284,16 @@ public class Ex07_Schedule {
 		System.out.print("날짜(yyyy-MM) : ");
 		String date = sc.nextLine();
 		
-		list.stream()
+		List<Schedule> tmpList = list.stream()
 			.filter(s-> s.getDateStr().substring(0, 7).equals(date))
-			.forEach(s-> System.out.println(s));
+			.collect(Collectors.toList());
+		
+		if(tmpList.size() == 0) {
+			System.out.println("검색 결과가 없습니다.");
+			return;
+		}
+		
+		tmpList.stream().forEach(s-> System.out.println(s));
 		
 	}
 
