@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -17,8 +19,8 @@ import lombok.Data;
 
 public class Ex09_ObjectStream2 {
 	static Scanner sc = new Scanner(System.in);
-	static ArrayList<Car> car = new ArrayList<Car>();
-	static String fileName = "src/day12/car_stream.txt";
+	static List<Car> list = new ArrayList<Car>();
+	
 	
 	public static void main(String[] args) {
 		/* 다음 기능을 갖는 프로그램을 작성하세요.
@@ -35,6 +37,11 @@ public class Ex09_ObjectStream2 {
 		
 		
 		int menu;
+		final int EXIT = 3;
+		
+		String fileName = "src/day12/car.txt";
+		
+		load(fileName, list);
 		
 		do {
 			printMenu();
@@ -44,7 +51,46 @@ public class Ex09_ObjectStream2 {
 			runMenu(menu);
 			
 			
-		}while (menu != 3);
+		}while (menu != EXIT);
+		
+		save(fileName, list);
+		
+	}
+
+
+	private static void load(String fileName, List<Car> list) {
+		
+		try(FileInputStream fis = new FileInputStream(fileName);
+			ObjectInputStream ois = new ObjectInputStream(fis)) {
+				
+				List<Car> tmp = (ArrayList<Car>) ois.readObject();
+				list.addAll(tmp);
+				
+			} catch (FileNotFoundException e) {
+				System.out.println("파일을 찾을 수 없습니다.");
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("IO 예외 발생");
+			} catch (ClassNotFoundException e) {
+				System.out.println("클래스를 찾을 수 없습니다.");
+			}
+		
+	}
+
+
+	private static void save(String fileName, List<Car> list) {
+		
+		try(FileOutputStream fos = new FileOutputStream(fileName);
+			ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			
+			oos.writeObject(list);
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("파일을 찾을 수 없습니다.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IO 예외 발생");
+		}
 		
 	}
 
@@ -61,10 +107,9 @@ public class Ex09_ObjectStream2 {
 		switch(menu) {
 		case 1: //자동차 추가
 			insertCar();
-			
 			break;
 		case 2: //자동차 조회
-			searchCar();
+			printCar();
 			break;
 		case 3:
 			System.out.println("프로그램을 종료합니다.");
@@ -77,53 +122,28 @@ public class Ex09_ObjectStream2 {
 
 
 	private static void insertCar() {
-		System.out.print("이름 : ");
-		String name = sc.nextLine();
 		System.out.print("브랜드 : ");
 		String brand = sc.nextLine();
+		System.out.print("이름 : ");
+		String name = sc.nextLine();
 		
-		try(FileOutputStream fos = new FileOutputStream(fileName);
-			ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-					
-			Car c = new Car(name, brand);
-			oos.writeObject(c);
-			car.add(c);
-			System.out.println("자동차를 등록했습니다.");
-					
-		} catch (FileNotFoundException e) {
-			System.out.println("파일을 열 수 없습니다.");
-		} catch (IOException e) {
-			System.out.println("IO 예외 발생");
-			e.getStackTrace();
-		}
+		list.add(new Car(name, brand));
 		
 		
 	}
 	
-	private static void searchCar() {
+	private static void printCar() {
 		
-		
-		
-		try(FileInputStream fis = new FileInputStream(fileName);
-			ObjectInputStream ois = new ObjectInputStream(fis)) {
-				
-			Stream<Car> stream = car.stream();
-			AtomicInteger index = new AtomicInteger(1);
-			
-			Car car = (Car)ois.readObject();
-			stream
-				.forEach(c -> {
-					int num = index.getAndIncrement();
-					System.out.println(num + ". " + c);
-				});
-				
-			} catch (IOException e) {
-				System.out.println("IO 예외 발생");
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				System.out.println("클래스를 찾을 수 없습니다.");
-				e.printStackTrace();
+		list.sort((o1, o2) -> {
+			if(!o1.getBrand().equals(o2.getBrand())) {
+				return o1.getBrand().compareTo(o2.getBrand());
 			}
+			return o1.getName().compareTo(o2.getName());
+		});
+		
+		for(Car car : list) {
+			System.out.println(car);
+		}
 			
 	}
 
@@ -142,7 +162,7 @@ class Car implements Serializable {
 	private String brand;
 	@Override
 	public String toString() {
-		return name + " : " + brand;
+		return brand + " : " + name;
 	}
 	
 	
