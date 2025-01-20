@@ -5,6 +5,9 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+
+
+
 public class StudentProgram implements ConsoleProgram {
 	
 	private Scanner sc = new Scanner(System.in);
@@ -20,8 +23,12 @@ public class StudentProgram implements ConsoleProgram {
 		String studentFileName = "src/homework/ex2/v2/student.txt";
 		String subjectFileName = "src/homework/ex2/v2/subject.txt";
 		
-		load(studentFileName, new ArrayList<Object>(studentManager.getList()));
-		load(subjectFileName, new ArrayList<Object>(subjectManager.getList()));
+		List<Student> students = (ArrayList<Student>) load(studentFileName);
+		List<Subject> subjects = (ArrayList<Subject>) load(subjectFileName);
+		
+		studentManager = new StudentManager(students);
+		subjectManager = new SubjectManager(subjects);
+		
 		
 		
 		do {
@@ -41,12 +48,30 @@ public class StudentProgram implements ConsoleProgram {
 					
 		} while(menu != EXIT);
 				
-				//저장하기
+		//저장하기
+		save(studentFileName, studentManager.getList());
+		save(subjectFileName, subjectManager.getList());
 	}
 	
 	@Override
 	public void printMenu() {
-		
+		System.out.print("----------------\r\n"
+				+ "메뉴\r\n"
+				+ " 1. 학생 등록\r\n"
+				+ " 2. 학생 수정\r\n"
+				+ " 3. 학생 삭제\r\n"
+				+ " 4. 과목 등록\r\n"
+				+ " 5. 과목 수정\r\n"
+				+ " 6. 과목 삭제\r\n"
+				+ " 7. 성적 등록\r\n"
+				+ " 8. 성적 수정\r\n"
+				+ " 9. 성적 삭제\r\n"
+				+ "10. 학생 조회\r\n"
+				+ "11. 과목 조회\r\n"
+				+ "12. 성적 조회\r\n"
+				+ "13. 종료\r\n"
+				+ "----------------\r\n"
+				+ "메뉴 입력 : ");
 		
 	}
 
@@ -98,191 +123,283 @@ public class StudentProgram implements ConsoleProgram {
 		
 	}
 	
-	private static void insertStudent() {
-		//학년, 반, 번호, 이름 입력
-		
-		//주의 : 학생 객체 생성 시 성적 리스트를 생성
-		//입력 받은 학년, 반, 번호, 이름을 이용하여 객체 생성 => 리스트에 있는 기능을 활용하기 위해
-		
-		//학생 매니저에게 학생 객체를 주면서 추가하라고 시키고 추가 여부를 확인해서 알림
-		
-		
-	}
-
-	private static void updateStudent() {
-		//학년, 반, 번호 입력
-		
-		//입력한 학생 정보를 객체 생성
-		
-		//학생 매니저에게 학생 객체를 주면서 있는지 확인 요청하여 있으면 알림 후 종료
-		
-		//아니면(있으면) 수정할 학년, 반, 번호, 이름을 입력
-		
-		//입력받은 정보로 객체를 생성
-		
-		//학생 매니저에게 기존 학생 객체와 새 학생 객체를 주면서 수정하고 수정 여부를 알려달라고 요청
-		//결과에 따라 알림.
+	private void insertStudent() {
+		//학생 정보를 입력받아 객체를 생성
+		Student std = inputStudent();
+		//생성된 학생 정보를 매니저에게 전달하여 등록 요청 후 성공 여부 반환
+		if(!studentManager.insertStudent(std)) {
+			System.out.println("이미 등록된 학생입니다.");
+			return;
+		}
+		System.out.println("학생을 등록헸습니다.");
 		
 		
 	}
 
-	private static void deleteStudent() {
-		//학년, 반, 번호를 입력
+	private void updateStudent() {
+		System.out.println("----------------");
+		System.out.println("학생 정보를 입력하세요.");
+		System.out.println("----------------");
+		Student std = inputBaseStudent();
+
+		Student selStd = studentManager.getStudent(std);
 		
-		//입력받은 정보로 객체 생성
+		if(selStd == null) {
+			System.out.println("일치하는 학생이 없습니다.");
+			return;
+		}
 		
-		//학생 매니저에게 학생 객체를 주면서 삭제하고 삭제여부를 알려달라고 요청
-		//삭제에 성공하면 성공알림 문구
+		System.out.println("----------------");
+		System.out.println("새 학생 정보를 입력하세요.");
+		System.out.println("----------------");
+		Student newStd = inputStudent();
 		
-		//실패하면 실패 알림문구 출력
+		if(studentManager.updateStudent(selStd, newStd)) {
+			System.out.println("학생을 수정했습니다.");
+			return;
+		}
+		System.out.println("이미 등록된 학생입니다.");
+
+	}
+
+	private void deleteStudent() {
+		Student std = inputBaseStudent();
+		
+		if(studentManager.deleteStudent(std)) {
+			System.out.println("학생을 삭제했습니다.");
+			return;
+		}
+		System.out.println("일치하는 학생이 없습니다.");
+		
+	}
+
+	private void insertSubject() {
+		Subject subject = inputSubject();
+		
+		if(!subjectManager.insertSubject(subject)) {
+			System.out.println("과목을 추가했습니다.");
+			return;
+		}
+		System.out.println("이미 등록된 과목입니다.");
+		
+	}
+
+	private void updateSubject() {
+		
+		System.out.println("----------------");
+		System.out.println("과목 정보를 입력하세요.");
+		System.out.println("----------------");
+		Subject subject = inputSubject();
+		
+		if(!subjectManager.contains(subject)) {
+			System.out.println("일치하는 과목이 없습니다.");
+			return;
+		}
+		
+		System.out.println("----------------");
+		System.out.println("새 과목 정보를 입력하세요.");
+		System.out.println("----------------");
+		
+		Subject newSubject = inputSubject();
+		
+		if(subjectManager.updateSubject(subject, newSubject)) {
+			System.out.println("과목을 수정했습니다.");
+			return;
+		}
+		
+		System.out.println("이미 등록된 과목입니다.");
+	}
+
+	private void deleteSubject() {
+		System.out.println("----------------");
+		System.out.println("과목 정보를 입력하세요.");
+		System.out.println("----------------");
+		
+		Subject subject = inputSubject();
+		
+		if(subjectManager.deleteSubject(subject)) {
+			System.out.println("과목을 삭제했습니다.");
+			return;
+		}
+		System.out.println("일치하는 과목이 없습니다.");
+		
+	}
+
+	private void insertScore() {
+		
+		System.out.println("----------------");
+		System.out.println("학생 정보를 입력하세요.");
+		System.out.println("----------------");
+		Student std = inputBaseStudent();
+		
+		if(studentManager.getStudent(std) == null) {
+			System.out.println("일치하는 학생이 없습니다.");
+			return;
+		}
+		
+		System.out.println("----------------");
+		System.out.println("성적 정보를 입력하세요.");
+		System.out.println("----------------");
+		Subject subject = inputSubject();
+		
+		if(!subjectManager.contains(subject)) {
+			System.out.println("일치하는 과목이 없습니다.");
+			return;
+		}
+		
+		System.out.print("성적 : ");
+		int score = sc.nextInt();
+		
+		SubjectScore subjectScore = new SubjectScore(subject, score);
+		
+		if(studentManager.insertScore(std, subjectScore)) {
+			System.out.println("성적을 추가했습니다.");
+			return;
+		}
+		
+		System.out.println("이미 등록된 성적입니다.");
+
+
+	}
+
+	private void updateScore() {	
+		System.out.println("----------------");
+		System.out.println("학생 정보를 입력하세요.");
+		System.out.println("----------------");
+		Student std = inputBaseStudent();
+	
+		if(studentManager.getStudent(std) == null) {
+			System.out.println("일치하는 학생이 없습니다.");
+			return;
+		}
+		System.out.println("----------------");
+		System.out.println("성적 정보를 입력하세요.");
+		System.out.println("----------------");
+		Subject subject = inputSubject();
+		if(!subjectManager.contains(subject)) {
+			System.out.println("일치하는 과목이 없습니다.");
+			return;
+		}
+		
+		System.out.println("----------------");
+		System.out.println("성적 정보를 입력하세요.");
+		System.out.println("----------------");
+	
+		Subject newSubject = inputSubject();
+		if(!subjectManager.contains(newSubject)) {
+			System.out.println("일치하는 과목이 없습니다.");
+			return;
+		}
+		System.out.print("성적 : ");
+		int score = sc.nextInt();
+		SubjectScore subjectScore = new SubjectScore(newSubject, score);
+		if(studentManager.updateScore(std, subject, subjectScore)) {
+			System.out.println("성적을 수정했습니다.");
+			return;
+		}
+		System.out.println("이미 등록된 성적입니다.");
+		
+	}
+
+	private void deleteScore() {
+		System.out.println("----------------");
+		System.out.println("학생 정보를 입력하세요.");
+		System.out.println("----------------");
+		Student std = inputBaseStudent();
+		
+		if(studentManager.getStudent(std) == null) {
+			System.out.println("일치하는 학생이 없습니다.");
+			return;
+		}
+		System.out.println("----------------");
+		System.out.println("성적 정보를 입력하세요.");
+		System.out.println("----------------");
+		Subject subject = inputSubject();
+		if(!subjectManager.contains(subject)) {
+			System.out.println("일치하는 과목이 없습니다.");
+			return;
+		}
+		
+		if(studentManager.deleteScore(std, subject)) {
+			System.out.println("성적을 삭제했습니다.");
+			return;
+		}
+		System.out.println("일치하는 성적이 없습니다.");
+	}
+
+	private void searchStudent() {
+		Student std = inputBaseStudent();
+		
+		studentManager.printStudent(std);
+		
+	}
+
+	private void searchSubject() {
+		
+		subjectManager.print();
 		
 		
 	}
 
-	private static void insertSubject() {
-		//학년, 학기, 과목명을 입력
+	private void searchScore() {
 		
-		//과목 객체 생성
+		System.out.println("----------------");
+		System.out.println("조회하려는 학생 정보를 입력하세요.");
+		System.out.println("----------------");
+		Student std = inputBaseStudent();
+		if(studentManager.getStudent(std) == null) {
+			System.out.println("일치하는 학생이 없습니다.");
+			return;
+		}
+		System.out.println("----------------");
+		System.out.println("조회하려는 과목 정보를 입력하세요.");
+		System.out.println("----------------");
+		Subject subject = inputSubject();
 		
-		//과목 매니저에게 과목을 주면서 등록하라고 요청 후 결과에 따라 알림
-		
-		
-		
-	}
-
-	private static void updateSubject() {
-		//학년, 학기, 과목명을 입력
-		
-		//입력한 정보로 객체를 생성
-		
-		//새 과목 정보를 입력(학년, 학기, 과목)
-		
-		//과목 매니저에게 기존 과목 객체와 새 과목 객체를 주면서 수정하라고 요청 후 결과에 따라 알림
-		
-		
-		
-	}
-
-	private static void deleteSubject() {
-		// 학년, 학기, 과목명을 입력
-		
-		//입력한 정보로 객체를 생성	
-		
-		//과목 매니저에게 과목 객체를 주면서 삭제하라고 요청 후 결과에 따라 알림
-		
-	}
-
-	private static void insertScore() {
-		//학년, 반, 번호를 입력
-		
-		//입력한 정보로 객체를 생성(Student)
-		
-		//학생 매니저에게 학생이 있는지 없는지 알려달라고 요청 후 없으면 알림 후 종료
-		
-		//학년, 학기, 과목을 입력
-		
-		//입력한 정보로 객체를 생성(Subject)
-		
-		//과목 매니저에게 과목이 있는지 없는지 알려달라고 요청 후 없으면 알림 후 종료
-		
-		//성적을 입력해서 과목 정보와 성적을 이용하여 객체를 생성(Score)
-		
-		//학생 매니저에게 학생 객체와 성적 객체를 주면서 성적을 등록하라고 요청 후 결과에 따라 알림
-		
-		
-	}
-
-	private static void updateScore() {
-		
-		//학년, 반, 번호를 입력
-		
-		//입력한 정보로 객체를 생성(Student)
-				
-		//학생 매니저에게 확인 후 없으면 알림 후 종료
-				
-		//학년, 학기, 과목을 입력
-				
-		//입력한 정보로 객체를 생성(Subject)
-				
-		//과목 매니저에게 과목을 확인 후 없으면 알림 후 종료
-		
-		//새 과목 정보를 입력(학년, 학기, 과목)을 입력
-		
-		//과목 매니저에게 새 과목을 확인 후 없으면 알림 후 종료
-		
-		//성적을 입력
-		
-		//새 과목 정보와 성적을 이용하여 새 성적 객체를 생성
-		
-		//학생 매니저에게 기존 과목과 새 성적 객체를 주면서 성적을 수정하라고 요청 후 결과에 따라 알림
-		
-		
-	}
-
-	private static void deleteScore() {
-		
-		//학년, 반, 번호를 입력
-		
-		//입력한 정보로 객체를 생성(Student)
-				
-		//학생 매니저에게 학생이 있는지 확인 => 없으면 알림 후 종료
-				
-		//학년, 학기, 과목을 입력
-				
-		//입력한 정보로 객체를 생성(Subject)
-				
-		//과목 매니저에게 과목이 있는지 확인 후 없으면 알림 후 종료
-		
-		//학생 매니저에게 과목을 주고 삭제 요청 후 결과에 따라 알림
-		
-		
-	}
-
-	private static void searchStudent() {
-		//학년, 반, 번호를 입력
-		
-		//입력한 정보로 객체를 생성(Student)
-		
-		//학생 매니저에게 학생 정보를 주면서 출력하라고 요청
-		
-	}
-
-	private static void searchSubject() {
-		
-		//과목 매니저에게 등록된 과목을 출력하라고 요청
-		
-		
-	}
-
-	private static void searchScore() {
-		//학년, 반, 번호를 입력
-		
-		//입력한 정보로 객체를 생성(Student)
-		
-		//학생 매니저에게 학생 존재 여부 확인 후 없으면 알림
-		
-		//학년, 학기, 과목명을 입력
-		
-		//과목 정보로 객체를 생성
-		
-		//학생 매니저에게 학생 정보와 과목 정보를 주면서 성적을 출력하라고 요청
-		
+		studentManager.printScore(std, subject);
 	}
 	
 	private void removeBuffer() {
 		sc.nextLine();
 	}
-
-	@Override
-	public void load(String fileName, List<Object> list) {
-		// TODO Auto-generated method stub
+	
+	/** 학년, 반, 번호를 입력하면 객체를 반환하는 메소드 */
+	public Student inputBaseStudent() {
+		System.out.print("학년 : ");
+		int grade = sc.nextInt();
+		System.out.print("학급 : ");
+		int classNum = sc.nextInt();
+		System.out.print("번호 : ");
+		int num = sc.nextInt();
 		
+		return new Student(grade, classNum, num, "");
 	}
-
-	@Override
-	public void save(String fileName, List<Object> list) {
-		// TODO Auto-generated method stub
+	
+	/** 학년, 반, 번호, 이름을 입력하면 객체를 반환하는 메소드 */
+	public Student inputStudent() {
+		Student tmp = inputBaseStudent();
 		
+		removeBuffer();
+		
+		System.out.print("이름 : ");
+		String name = sc.nextLine();
+		
+		tmp.setName(name);
+		
+		return tmp;
+	}
+	
+	/** 학년, 학기, 과목명을 입력하여 과목 객체를 생성하는 메소드 */
+	public Subject inputSubject() {
+		System.out.print("학년 : ");
+		int grade = sc.nextInt();
+		System.out.print("학기 : ");
+		int semester = sc.nextInt();
+		removeBuffer();
+		System.out.print("과목 : ");
+		String name = sc.nextLine();
+		
+		return new Subject(grade, semester, name);
 	}
 
 }
