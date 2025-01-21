@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 import lombok.AllArgsConstructor;
 
+//Client 클래스를 이용하여 서버와 클라이언트가 문자열을 주고 받는 예제
+//Client 클래스를 이용한 1:1 채팅.
 @AllArgsConstructor
 public class Client {
 	
@@ -27,7 +29,7 @@ public class Client {
 					String str = ois.readUTF();
 					System.out.println("수신 : " + str);
 					
-					if(str.equals("EXIT")) {
+					if(str.equals(EXIT)) {
 						break;
 					}
 					
@@ -51,13 +53,13 @@ public class Client {
 				ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 				
 				while(true) {
-					System.out.print("입력(종료: EXIT) : ");
+					System.out.print("입력(종료: " + EXIT + ") : ");
 					String str = sc.nextLine();
 					
 					oos.writeUTF(str);
 					oos.flush();
 					
-					if(str.equals("EXIT")) {
+					if(str.equals(EXIT)) {
 						break;
 					}
 				}
