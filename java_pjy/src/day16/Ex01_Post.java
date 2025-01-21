@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +35,16 @@ public class Ex01_Post {
 		
 		String fileName = "src/day16/post.txt";
 		
-		list = (ArrayList<Post>) load(fileName);
+		list = (ArrayList<Post>)load(fileName);
+		
+		if(list == null || list.size() == 0) {
+			list = new ArrayList<Post>();
+		} else {
+			int lastIndex = list.size() - 1;
+			Post lastPost = list.get(lastIndex);
+			int lastNum = lastPost.getNum();
+			Post.setCount(lastNum + 1);
+		}
 		
 		do {
 			
@@ -63,7 +73,7 @@ public class Ex01_Post {
 		}
 		
 	}
-	private static ArrayList<Post> load(String fileName) {
+	private static Object load(String fileName) {
 		
 		try(FileInputStream fis = new FileInputStream(fileName);
 			ObjectInputStream ois = new ObjectInputStream(fis)) {
@@ -100,7 +110,7 @@ public class Ex01_Post {
 			deletePost();
 			break;
 		case 4:
-			searchPost();
+			viewPost();
 			break;
 		case 5:
 			System.out.println("프로그램을 종료합니다.");
@@ -120,28 +130,31 @@ public class Ex01_Post {
 		Post post = new Post(title, content, writer);
 		
 		list.add(post);
-		for(Post post1 : list) { //확인용
-			post1.print();
-		}
 		
 	}
 	
 	private static void updatePost() {
 		System.out.print("수정할 게시글 번호 입력 : ");
-		int num = sc.nextInt() - 1;
+		int num = sc.nextInt();
+		removeBuffer();
 		
-		if(num >= list.size()) {
-			System.out.println("일치하는 게시글이 없습니다.");
+		//indexOf => Objects.equals(o1, o2) => o1과 o2가 다른 클래스이면 무조건 false
+		int index = list.indexOf(new Post(num)); 
+		
+		if(index < 0) {
+			System.out.println("등록되지 않거나 삭제된 게시글입니다.");
 			return;
 		}
 		
-		removeBuffer();
 		System.out.print("제목 : ");
 		String title = sc.nextLine();
 		System.out.print("내용 : ");
 		String content = sc.nextLine();
 		
-		list.get(num).updatePost(title, content);
+		Post post = list.get(index);
+		
+		post.setTitle(title);
+		post.setContent(content);
 		
 		System.out.println("게시글을 수정했습니다.");
 		
@@ -149,28 +162,33 @@ public class Ex01_Post {
 	
 	private static void deletePost() {
 		System.out.print("삭제할 게시글 번호 입력 : ");
-		int index = sc.nextInt() - 1;
+		int num = sc.nextInt();
 		
-		if(index >= list.size()) {
-			System.out.println("일치하는 게시글이 없습니다.");
-		}
 		
-		Post tmp = list.get(index);
-		list.remove(tmp);
-		System.out.println("게시글을 삭제했습니다.");
-		
-	}
-	
-	private static void searchPost() {
-		System.out.print("조회할 게시글 번호 입력 : ");
-		int index = sc.nextInt() - 1;
-		
-		if(index >= list.size()) {
-			System.out.println("일치하는 게시글이 없습니다.");
+		if(list.remove(new Post(num))) {
+			System.out.println("게시글을 삭제했습니다.");
 			return;
 		}
 		
-		list.get(index).searchPost(list, index);
+		System.out.println("등록되지 않거나 삭제된 게시글입니다.");
+		
+		
+	}
+	
+	private static void viewPost() {
+		System.out.print("조회할 게시글 번호 입력 : ");
+		int num = sc.nextInt();
+		
+		int index = list.indexOf(new Post(num));
+		
+		if(index < 0) {
+			System.out.println("등록되지 않거나 삭제된 게시글입니다.");
+			return;
+		}
+		
+		Post post = list.get(index);
+		post.viewPost();
+		post.print();
 		
 	}
 	
@@ -181,8 +199,10 @@ public class Ex01_Post {
 }
 
 @Data
-class Post {
-
+class Post implements Serializable{
+	
+	private static final long serialVersionUID = 3213525506836040206L;
+	
 	private static int count;
 	private int num;
 	private String title, content, writer;
@@ -201,13 +221,16 @@ class Post {
 		return num == other.num;
 	}
 
-	public void searchPost(List<Post> list, int index) {
-		++view;
-		
-		list.get(index).print();
+	public static void setCount(int count) {
+		Post.count = count;
 		
 	}
 
+	public void viewPost() {
+		view++;
+		
+	}
+	
 	public void updatePost(String title, String content) {
 		
 		if(title == null || content == null) {
@@ -228,6 +251,10 @@ class Post {
 	}
 	
 	
+	public Post(int num) {
+		this.num = num;
+	}
+
 	public void print() {
 		System.out.println("-------------------------");
 		System.out.println("번호 : " + num);
