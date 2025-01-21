@@ -9,9 +9,9 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Ex02_Client {
-
+	//서버와 연결 후 서버에 문자열을 보내고, 서버에서 받은 문자열을 출력하는 예제
 	public static void main(String[] args) {
-
+		
 		//서버 IP와 서버 포트를 지정
 		String ip = "127.0.0.1"; //localhost
 		int port = 5001;
