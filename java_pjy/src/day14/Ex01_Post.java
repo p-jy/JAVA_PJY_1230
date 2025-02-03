@@ -33,7 +33,7 @@ public class Ex01_Post {
 		int menu;
 		final int EXIT = 5;
 		
-		String fileName = "src/day16/post.txt";
+		String fileName = "src/day14/post.txt";
 		
 		list = (ArrayList<Post>)load(fileName);
 		

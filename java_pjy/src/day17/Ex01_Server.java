@@ -25,8 +25,8 @@ public class Ex01_Server {
 		 * */
 		
 		int port = 5001;
-		String fileName = "src/day19/data.txt";
-		String fileName2 = "src/day19/count.txt";
+		String fileName = "src/day17/data.txt";
+		String fileName2 = "src/day17/count.txt";
 		
 		try {
 			
