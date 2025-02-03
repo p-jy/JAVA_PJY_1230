@@ -1,4 +1,4 @@
-package day18;
+package day15.socket5;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,47 +10,43 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+public class Ex06_Server {
 
-public class Ex01_Server {
-
+	
+	
 	public static void main(String[] args) {
-
-		int port = 5003; 
-		ServerSocket serverSocket;
+		
+		/* 학생 관리하는 프로그램을 구현. 프로그램에서 관리하는 정보를 서버에 기록하는 예제
+		 */
+		
+		String fileName = "src/day17/socket5/data.txt";
+		List<Student> list = (List<Student>) load(fileName);
+		if(list == null) {
+			list = new ArrayList<Student>();
+		}
+		
+		int port = 5001;
 		
 		try {
-			serverSocket = new ServerSocket(port);
-		} catch (IOException e) {
-			System.out.println("[예외가 발생하여 서버가 종료됩니다.]");
-			e.printStackTrace();
-			return;
-		}
-		
-		List<Account> list;
-		String fileName = "src/day18/data.txt";
-		list = (List<Account>) load(fileName);
-		if(list == null) {
-			list = new ArrayList<Account>();
-		}
 			
-		while(true) {
-			save(fileName, list);
+			ServerSocket serverSocket = new ServerSocket(port);
 			
-			//클라이언트와 연결
-			Socket socket;
-			try {
-				socket = serverSocket.accept();
-				System.out.println("[클라이언트와 연결되었습니다.]");
-			} catch (IOException e) {
-				System.out.println("[예외가 발생하여 클라이언트와 연결을 종료합니다.]");
-				e.printStackTrace();
-				continue;
+			while(true) {
+				
+				Socket socket = serverSocket.accept();
+				System.out.println("[연결 성공]");
+				
+				Server server = new Server(list, socket);
+				server.run();
+				
 			}
 			
-			//서버를 실행
-			Server server = new Server(socket, list);
-			server.run();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			save(fileName, list);
 		}
+		
 	}
 	
 	private static void save(String fileName, Object obj) {
