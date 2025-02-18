@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>체크박스 예제2</title>
+	<style>
+		.box{
+			height: 50px; padding: 10px; border: 3px solid rgba(0, 0, 0, 0.7);
+			margin-bottom: 10px; font-size: 30px; line-height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div class="box"></div>
+	<div class="hobby-container">
+		<label>
+			<input type="checkbox" name="hobby" value="운동"> 운동
+		</label>
+		<label>
+			<input type="checkbox" name="hobby" value="독서"> 독서
+		</label>
+		<label>
+			<input type="checkbox" name="hobby" value="음악감상"> 음악감상
+		</label>
+		<label>
+			<input type="checkbox" name="hobby" value="여행"> 여행
+		</label>
+	</div>
+	<script>
+		//빈 배열 생성
+		let hobbies = [];
+		//name이 hobby인 요소들을 선택
+		const hobbyBoxes = document.querySelectorAll("[name=hobby]");
+		//클래스가 box인 요소 선택
+		const box = document.querySelector(".box");
+
+		//hobbyBoxes 각각에 change 이벤트를 등록
+		hobbyBoxes.forEach(hobby=> {
+			hobby.addEventListener('change', ()=> {
+				//현재 체크박스의 checked를 가져옴
+				let checked = hobby.checked;
+				//현재 체크박스의 value를 가져옴
+				let value = hobby.value;
+				//checked가 true이면 배열에 추가
+				if(checked) {
+					hobbies.push(value);
+				}
+				// //false이면 배열에서 위치를 찾아 제거
+				else {
+					let index = hobbies.indexOf(value);
+					hobbies.splice(index, 1);
+				}
+				drawBox(hobbies);
+			});
+		});
+		function drawBox(arr) {
+			//배열에 있는 각 원소의 값에 ,를 붙여서 하나의 문자열로 만듦(join)
+			let result = arr.join(",");
+			//위 문자열을 box안에 텍스트로 수정
+			box.innerText = result;
+		}
+	</script>
+</body>
+</html>
