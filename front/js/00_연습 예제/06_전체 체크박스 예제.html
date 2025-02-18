@@ -42,7 +42,7 @@
 					return;
 				}
 				//체크박스의 상태가 현재 checked와 같은 요소들을 선택
-				let seletor = checked ? "[name=email]:checked" : "[name=email]:noe(:checked)";
+				let seletor = "[name=email]:checked";
 				let sameCheckboxes = document.querySelectorAll(seletor);
 				//체크박스의 상태가 현재 checked와 같은 요소의 수가 checkboxes의 수와 같다면
 				if(sameCheckboxes.length == checkboxes.length) {
