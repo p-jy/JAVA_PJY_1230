@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>전체 체크박스 예제</title>
+	<script src="../../static/js/jquery.min.js"></script>
+</head>
+<body>
+	<input type="checkbox" id="all">
+	<label for="all">전체</label> <br>
+	<input type="checkbox" name="email"> <br>
+	<input type="checkbox" name="email"> <br>
+	<input type="checkbox" name="email"> <br>
+	<input type="checkbox" name="email"> <br>
+	
+	<script>
+		// $('#all').on('change', function(){
+		// 	$('[name=email]').prop('checked', $('#all').prop('checked'));
+		// });
+		$('#all').click(function(){
+			let checked = $(this).prop('checked');
+
+			$('[name=email]').prop('checked', checked);
+		})
+
+		$('[name=email]').click(function(){
+			let checked = $(this).prop('checked');
+
+			if(!checked) {
+				$('#all').prop('checked', checked);
+				return;
+			}
+
+			if($('[name=email]:checked').length == $('[name=email]').length) {
+				$('#all').prop('checked', checked);
+			}
+		});
+
+		
+	</script>
+</body>
+</html>
