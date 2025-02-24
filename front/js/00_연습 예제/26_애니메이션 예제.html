@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>애니메이션 css 예제</title>
+	<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+</head>
+<body>
+	<h1 id="h1" class="">클릭</h1>
+	<script>
+		const h1 = document.querySelector('#h1');
+		h1.addEventListener('click', function() {
+			h1.classList.remove("animate__animated", "animate__bounce");
+			setTimeout(function() {
+				h1.classList.add("animate__animated", "animate__bounce");
+			}, 10);
+		})
+	</script>
+</body>
+</html>
