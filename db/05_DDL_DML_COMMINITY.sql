@@ -42,3 +42,6 @@ SELECT * FROM BOARD WHERE BO_NUM = 1;
 
 # 2025년 2월 25일에 작성된 게시글을 조회하는 쿼리
 SELECT * FROM BOARD WHERE BO_DATE BETWEEN "2025-02-25" AND "2025-02-25 23:59:59";
+
+# 제목이나 내용에 "안녕"을 포함하는 게시글을 조회하는 쿼리
+SELECT * FROM BOARD WHERE BO_TITLE LIKE "%안녕%" OR BO_CONTENT LIKE "%안녕%";
