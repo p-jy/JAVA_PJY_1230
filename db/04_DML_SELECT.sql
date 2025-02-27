@@ -360,3 +360,38 @@ SELECT REPLACE("HELLO JAVA", "JAVA", "C++") AS `REPLACE`;
 SELECT REVERSE("ABCDEF") AS `REVERSE`;
 # SUBSTRING(문자열, 시작위치, 길이) : 문자열에서 시작위치부터 길이만큼 부분문자열을 반환
 SELECT SUBSTRING("HELLO JAVA", 7, 4) AS SUBSTRING;
+
+# GROUP BY 할 때 GROUP BY에 사용한 속성이 아닌 속성을 조회하는 경우 에러가 발생하는데 이를 해결하는 쿼리.
+SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
+# 위에서 설정한 쿼리를 되돌리는 쿼리.
+SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY';
+
+USE STUDENT;
+# 각 학생별 평균을 조회하는 쿼리
+SELECT ST_GRADE 학년, ST_CLASS 반, ST_NUM 번호, ST_NAME 이름, AVG(SC_SCORE) 평균
+FROM SCORE
+JOIN STUDENT ON SC_ST_KEY = ST_KEY
+GROUP BY ST_KEY;
+# 1학년 1반의 등수를 조회하는 쿼리(평균).
+# 평균이 같으면 국어, 영어, 수학 점수 순으로 비교하여 등수를 결정. 다 같으면 같은 등수
+# 같은 등수가 나오는 경우, 다음 등수는 같은 등수 수만큼 건너뜀
+SELECT 
+	 RANK() OVER
+		(ORDER BY 평균 DESC) AS 등수,
+	T.*
+FROM
+	(SELECT ST_GRADE 학년, ST_CLASS 반, ST_NUM 번호, ST_NAME 이름, AVG(SC_SCORE) 평균
+		FROM SCORE
+		JOIN STUDENT ON SC_ST_KEY = ST_KEY
+        WHERE ST_GRADE = 1 AND ST_CLASS = 1
+		GROUP BY ST_KEY) AS T;
+        
+# 2학년 등수를 조회하는 쿼리(평균)
+SELECT
+	RANK() OVER (ORDER BY 평균 DESC) AS 등수, T.*
+FROM
+	(SELECT ST_GRADE 학년, ST_CLASS 반, ST_NUM 번호, ST_NAME 이름, AVG(SC_SCORE) 평균
+    FROM SCORE
+    JOIN STUDENT ON SC_ST_KEY = ST_KEY
+    WHERE ST_GRADE = 2
+    GROUP BY ST_KEY) AS T;
