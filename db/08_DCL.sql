@@ -29,3 +29,6 @@ GRANT ALL PRIVILEGES ON COMMUNITY.* TO 'community_admin'@'%';
 # 권한 제거
 # REVOKE 권한 ON DB명.테이블명 FROM '아이디'@'호스트명';
 REVOKE INSERT ON COMMUNITY.* FROM 'community_admin'@'%'; # 여러개의 권한 부여/제거 : ,로 구분
+
+# 권한 확인
+SHOW GRANTS FOR 'community_admin'@'%';
