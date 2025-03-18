@@ -1,6 +1,7 @@
 package kr.kh.spring.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -83,7 +84,7 @@ public class HomeController {
 	public String nameAge(@PathVariable("name")String name1, @PathVariable("age")int age1) {
 		System.out.println("화면에서 전송한 이름 : " + name1);
 		System.out.println("화면에서 전송한 이름 : " + age1);
-		return "sample/send";
+		return "/sample/send";
 	}
 	@GetMapping("/redirect")
 	public String redirect( PersonDTO person) {
@@ -113,6 +114,7 @@ public class HomeController {
 		model.addAttribute("str", "<h1>서버에서 보낸 데이터입니다.</h1>");
 		model.addAttribute("age", 10);
 		model.addAttribute("list", list);
+		model.addAttribute("date", new Date());
 		return "/sample/jstl";
 	}
 }
