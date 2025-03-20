@@ -1,4 +1,3 @@
-
 package kr.kh.spring.service;
 
 import java.util.List;
@@ -9,7 +8,7 @@ import kr.kh.spring.model.vo.PostVO;
 
 public interface PostService {
 
-	List<PostVO> getPostList();
+	List<PostVO> getPostList(int po_bo_num);
 
 	List<BoardVO> getBoardList();
 
@@ -24,6 +23,10 @@ public interface PostService {
 	PostVO getPost(int po_num);
 
 	boolean deletePost(int po_num, MemberVO user);
+
+	boolean updatePost(PostVO post, MemberVO user);
+
+	void updateView(int po_num);
 
 	
 

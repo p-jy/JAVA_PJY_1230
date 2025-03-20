@@ -17,8 +17,8 @@ public class PostServiceImp implements PostService {
 	private PostDAO postDao;
 
 	@Override
-	public List<PostVO> getPostList() {
-		return postDao.selectPostList();
+	public List<PostVO> getPostList(int po_bo_num) {
+		return postDao.selectPostList(po_bo_num);
 	}
 
 	@Override
@@ -55,18 +55,17 @@ public class PostServiceImp implements PostService {
 
 	@Override
 	public boolean insertPost(PostVO post, MemberVO user) {
-		if( post == null ||
-			post.getPo_title().trim().length() == 0 ||
-			post.getPo_content().trim().length() == 0) {
+		if(	post == null || 
+			post.getPo_title().trim().length() == 0 || 
+			post.getPo_content().length() == 0) {
 			return false;
 		}
-		
 		if(user == null) {
 			return false;
 		}
-		
 		post.setPo_me_id(user.getMe_id());
 		boolean res = postDao.insertPost(post);
+		
 		
 		return res;
 	}
@@ -87,10 +86,37 @@ public class PostServiceImp implements PostService {
 		if(post == null || !post.getPo_me_id().equals(user.getMe_id())) {
 			return false;
 		}
-		//같으면 게시글 수정
+		//게시글 수정
 		boolean res = postDao.deletePost(po_num);
 		
 		return res;
+	}
+
+	@Override
+	public boolean updatePost(PostVO post, MemberVO user) {
+		if(	post == null || 
+			post.getPo_title().trim().length() == 0 || 
+			post.getPo_content().length() == 0) {
+			return false;
+		}
+		if(user == null) {
+			return false;
+		}
+		//작성자인지 확인
+		//게시글 정보를 가져옴
+		PostVO dbPost = postDao.selectPost(post.getPo_num());
+		//게시글의 작성자와 회원이 다르면 false 리턴
+		if(dbPost == null || !dbPost.getPo_me_id().equals(user.getMe_id())) {
+			return false;
+		}
+		boolean res = postDao.updatePost(post);
+		
+		return res;
+	}
+
+	@Override
+	public void updateView(int po_num) {
+		postDao.updateView(po_num);
 	}
 
 		
