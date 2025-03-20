@@ -15,8 +15,6 @@
 - 단 주석에서도 인식 되기 때문에 주석에서 조심히 작성. ${name}
  -->
 <P>  서버에서 보낸 제 이름은 ${name}입니다. </P>
-
-
 <a href="<c:url value="?name=abc&age=10"/>">서버로 name과 age 값을 전송</a>
 <br>
 <a href="<c:url value="/send?name=abc&age=10"/>">서버(/send)로 name과 age 값을 전송</a>
