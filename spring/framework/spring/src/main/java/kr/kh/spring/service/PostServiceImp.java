@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import kr.kh.spring.dao.PostDAO;
 import kr.kh.spring.model.vo.BoardVO;
+import kr.kh.spring.model.vo.MemberVO;
 import kr.kh.spring.model.vo.PostVO;
 
 @Service
@@ -50,6 +51,46 @@ public class PostServiceImp implements PostService {
 			return false;
 		}
 		return postDao.updateBoard(board);
+	}
+
+	@Override
+	public boolean insertPost(PostVO post, MemberVO user) {
+		if( post == null ||
+			post.getPo_title().trim().length() == 0 ||
+			post.getPo_content().trim().length() == 0) {
+			return false;
+		}
+		
+		if(user == null) {
+			return false;
+		}
+		
+		post.setPo_me_id(user.getMe_id());
+		boolean res = postDao.insertPost(post);
+		
+		return res;
+	}
+
+	@Override
+	public PostVO getPost(int po_num) {
+		return postDao.selectPost(po_num);
+	}
+
+	@Override
+	public boolean deletePost(int po_num, MemberVO user) {
+		if(user == null) {
+			return false;
+		}
+		//게시글 정보를 가져옴
+		PostVO post = postDao.selectPost(po_num);
+		//게시글의 작성자와 회원이 다르면 false 리턴
+		if(post == null || !post.getPo_me_id().equals(user.getMe_id())) {
+			return false;
+		}
+		//같으면 게시글 수정
+		boolean res = postDao.deletePost(po_num);
+		
+		return res;
 	}
 
 		
