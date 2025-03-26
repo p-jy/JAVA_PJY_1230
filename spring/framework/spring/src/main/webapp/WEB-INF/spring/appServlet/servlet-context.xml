@@ -10,6 +10,7 @@
 	<annotation-driven />
 
 	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/download/**" location="file:///D:/uploads/" />
 
 	<!-- 
 	- 기본 뷰 리졸버
@@ -46,7 +47,7 @@
 	<beans:bean id="adminInterceptor" class="kr.kh.spring.interceptor.AdminInterceptor"/>
 	<beans:bean id="guestInterceptor" class="kr.kh.spring.interceptor.GuestInterceptor"/>
 	<beans:bean id="memberInterceptor" class="kr.kh.spring.interceptor.MemberInterceptor"/>
-	
+
 	<!-- 인터셉터 맵핑 -->
 	<interceptors>
 		<interceptor>
@@ -56,10 +57,28 @@
 			<beans:ref bean="memberInterceptor"/>
 		</interceptor>
 		<interceptor>
-			<!-- /login(get, post)를 갔다 올때마다 LoginInterceptor가 실행 -->
+			<!-- /login(get, post)를 갔다 올때마다 LoginInterceptor가 실행  -->
 			<mapping path="/login"/>
 			<beans:ref bean="loginInterceptor"/>
 		</interceptor>
+		<interceptor>
+			<mapping path="/admin/**"/>
+			<beans:ref bean="adminInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/login"/>
+			<mapping path="/signup"/>
+			<beans:ref bean="guestInterceptor"/>
+		</interceptor>
 	</interceptors>
-
+	<!-- 업로드 파일 용량 설정 -->
+	<beans:bean id="multipartResolver" 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 업로드 최대 크기 10Mb -->
+		<beans:property name="maxUploadSize" value="10485760"/>
+	</beans:bean>
+	<!-- 업로드할 파일 경로 -->
+	<beans:bean id="uploadPath" class="java.lang.String">
+		<beans:constructor-arg value="d:\\uploads"/>
+	</beans:bean>
 </beans:beans>

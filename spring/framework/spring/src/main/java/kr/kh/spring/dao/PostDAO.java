@@ -5,11 +5,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import kr.kh.spring.model.vo.BoardVO;
+import kr.kh.spring.model.vo.FileVO;
 import kr.kh.spring.model.vo.PostVO;
+import kr.kh.spring.pagination.Criteria;
 
 public interface PostDAO {
 
-	List<PostVO> selectPostList(@Param("po_bo_num")int po_bo_num);
+	List<PostVO> selectPostList(@Param("cri")Criteria cri);
 
 	List<BoardVO> selectBoardList();
 
@@ -28,6 +30,17 @@ public interface PostDAO {
 	boolean updatePost(@Param("post")PostVO post);
 
 	void updateView(@Param("po_num")int po_num);
+
+	void insertFile(@Param("file")FileVO fileVo);
+
+	List<FileVO> selectFileList(@Param("po_num")int po_num);
+
+	void deleteFile(@Param("fi_num")int fi_num);
+
+	FileVO selectFile(@Param("fi_num")int fi_num);
+
+	int selectCountPostList(@Param("cri")Criteria cri);
+	
 
 	
 	
