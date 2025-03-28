@@ -19,7 +19,9 @@ import kr.kh.spring.model.vo.PostVO;
 import kr.kh.spring.pagination.PageMaker;
 import kr.kh.spring.pagination.PostCriteria;
 import kr.kh.spring.service.PostService;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Controller
 public class PostController {
 
@@ -31,15 +33,12 @@ public class PostController {
 		cri.setPerPageNum(2);
 		//게시글 목록 전체를 가져옴
 		List<PostVO> list = postService.getPostList(cri);
-		
 		List<BoardVO> boardList = postService.getBoardList();
-		
-		model.addAttribute("boardList", boardList);
-		
 		PageMaker pm = postService.getPageMaker(cri);
 		
 		//화면에 게시글 목록을 전송
 		//매퍼의 resultType=kr.kh.spring.model.vo.postVO
+		model.addAttribute("boardList", boardList);
 		model.addAttribute("list", list);
 		model.addAttribute("pm", pm);
 		return "/post/list";
@@ -65,7 +64,6 @@ public class PostController {
 		}
 		return "/msg/msg";
 	}
-	
 	@GetMapping("/post/detail/{po_num}")
 	public String postDetail(Model model, @PathVariable("po_num")int po_num) {
 		//게시글 조회수를 증가
@@ -80,7 +78,6 @@ public class PostController {
 		model.addAttribute("list", list);
 		return "/post/detail";
 	}
-	
 	@GetMapping("/post/delete/{po_num}")
 	public String postDelete(Model model, @PathVariable("po_num")int po_num, HttpSession session) {
 		//로그인한 회원 정보를 가져옴
@@ -96,11 +93,12 @@ public class PostController {
 	}
 	@GetMapping("/post/update/{po_num}")
 	public String postUpdate(Model model, @PathVariable("po_num")int po_num, HttpSession session) {
+		
 		//게시글을 가져옴
 		PostVO post = postService.getPost(po_num);
 		//작성자인지 아닌지 확인하는 작업 
 		MemberVO user = (MemberVO) session.getAttribute("user");
-		
+
 		//로그인 안되어 있거나, 없는 게시글이거나 작성자가 아니면
 		if(user == null || post == null || !post.getPo_me_id().equals(user.getMe_id())) {
 			model.addAttribute("url", "/post/list");
@@ -108,18 +106,22 @@ public class PostController {
 			return "/msg/msg";
 		}
 		
+		
 		List<BoardVO> list = postService.getBoardList();
+		
 		List<FileVO> fileList = postService.getFileList(po_num);
 		
 		//화면에 전송
 		model.addAttribute("post", post);
 		model.addAttribute("list", list);
 		model.addAttribute("fileList", fileList);
-		return "/post/update";
+		return "/post/update";			
+		
 		
 	}
 	@PostMapping("/post/update")
-	public String postUpdatePost(Model model, PostVO post, HttpSession session, MultipartFile[] fileList, int[] delNums) {		
+	public String postUpdatePost(Model model, PostVO post, 
+			HttpSession session, MultipartFile [] fileList, int [] delNums) {
 		MemberVO user = (MemberVO) session.getAttribute("user");
 		if(postService.updatePost(post, user, fileList, delNums)) {
 			model.addAttribute("msg", "게시글을 수정했습니다.");
