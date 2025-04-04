@@ -139,7 +139,7 @@ public class HomeController {
 	}
 	
 	@PostMapping("/signup")
-	public String signupPost(MemberVO member, Model model) {
+	public String signupPost(Model model, MemberVO member) {
 		if(memberService.signup(member)) {
 			model.addAttribute("msg", "회원 가입을 했습니다.");
 			model.addAttribute("url", "/");
@@ -149,7 +149,14 @@ public class HomeController {
 	}
 	
 	@GetMapping("/login")
-	public String login() {
+	public String login(HttpServletRequest request) {
+		//이전 URL을 가져옴
+		String prevUrl = request.getHeader("Referer");
+		//이전 URL이 있고, /login이 아니면 세션에 저장
+		if(prevUrl != null && !prevUrl.contains("/login")) {
+			request.getSession().setAttribute("prevUrl", prevUrl);
+			System.out.println(prevUrl);
+		}
 		return "/member/login";
 	}
 	@PostMapping("/login")
@@ -162,14 +169,14 @@ public class HomeController {
 		user.setAuto(member.isAuto());
 		//가져온 회원 정보를 인터셉터에게 전달
 		model.addAttribute("user", user);
-		return "redirect:/";
+		return "msg/msg";
 	}
 	@GetMapping("/logout")
 	public String logout(HttpServletRequest request) {
 		
 		//세션에 있는 user를 삭제
 		HttpSession session = request.getSession();
-		MemberVO user = (MemberVO) session.getAttribute("user");
+		MemberVO user = (MemberVO)session.getAttribute("user");
 		session.removeAttribute("user");
 		if(user != null) {
 			user.setMe_cookie(null);
