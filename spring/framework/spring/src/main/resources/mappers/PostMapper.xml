@@ -15,12 +15,12 @@
 		</if>
 		<choose>
 			<when test="cri.type == 0">
-				and (po_title like concat('%', #{cri.search}, '%')
-				or po_content like concat('%', #{cri.search}, '%')
+				and (po_title like concat('%', #{cri.search}, '%') 
+				or po_content like concat('%', #{cri.search}, '%') 
 				or po_me_id = #{cri.search})
 			</when>
 			<when test="cri.type == 1">
-				and (po_title like concat('%', #{cri.search}, '%')
+				and (po_title like concat('%', #{cri.search}, '%') 
 				or po_content like concat('%', #{cri.search}, '%'))
 			</when>
 			<when test="cri.type == 2">
@@ -77,37 +77,33 @@
 	</update>
 	<insert id="insertFile">
 		insert into file(fi_ori_name, fi_name, fi_po_num)
-		values(#{file.fi_ori_name}, #{file.fi_name}, #{file.fi_po_num})
+		values(#{file.fi_ori_name},#{file.fi_name},#{file.fi_po_num})
 	</insert>
 	<select id="selectFileList" resultType="FileVO">
-		select * from file
-		where fi_po_num = #{po_num}
+		select * from file where fi_po_num = #{po_num}
 	</select>
 	<delete id="deleteFile">
-		delete from file
-		where fi_num = #{fi_num}
+		delete from file where fi_num = #{fi_num}
 	</delete>
 	<select id="selectFile" resultType="FileVO">
-		select * from file
-		where fi_num = #{fi_num}
+		select * from file where fi_num = #{fi_num}	
 	</select>
 	<select id="selectCountPostList" resultType="int">
 		select 
 			count(*)
 		from post
-		join board on po_bo_num = bo_num 
 		where  po_del = "N"
 		<if test="cri.po_bo_num != 0"> 
 			and po_bo_num = #{cri.po_bo_num}
 		</if>
 		<choose>
 			<when test="cri.type == 0">
-				and (po_title like concat('%', #{cri.search}, '%')
-				or po_content like concat('%', #{cri.search}, '%')
+				and (po_title like concat('%', #{cri.search}, '%') 
+				or po_content like concat('%', #{cri.search}, '%') 
 				or po_me_id = #{cri.search})
 			</when>
 			<when test="cri.type == 1">
-				and (po_title like concat('%', #{cri.search}, '%')
+				and (po_title like concat('%', #{cri.search}, '%') 
 				or po_content like concat('%', #{cri.search}, '%'))
 			</when>
 			<when test="cri.type == 2">
@@ -115,4 +111,22 @@
 			</when>
 		</choose>
 	</select>
+	<select id="selectLike" resultType="LikeVO">
+		select * from `like` 
+		where li_po_num = #{like.li_po_num} and li_me_id = #{like.li_me_id}
+	</select>
+	<insert id="insertLike">
+		insert into `like`(li_po_num, li_me_id, li_state)
+		value(#{like.li_po_num},#{like.li_me_id},#{like.li_state})
+	</insert>
+	<update id="updateLike">
+		update `like` set li_state = #{like.li_state} 
+		where li_po_num = #{like.li_po_num} and li_me_id = #{like.li_me_id}
+	</update>
+	<update id="updateUpDown">
+		update post set
+		po_up = (select count(*) from `like` where li_po_num = #{po_num} and li_state = 1),
+		po_down = (select count(*) from `like` where li_po_num = #{po_num} and li_state = -1)
+		where po_num = #{po_num}
+	</update>
 </mapper>

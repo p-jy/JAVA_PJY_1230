@@ -12,11 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.kh.spring.dao.PostDAO;
 import kr.kh.spring.model.vo.BoardVO;
 import kr.kh.spring.model.vo.FileVO;
+import kr.kh.spring.model.vo.LikeVO;
 import kr.kh.spring.model.vo.MemberVO;
 import kr.kh.spring.model.vo.PostVO;
 import kr.kh.spring.pagination.Criteria;
 import kr.kh.spring.pagination.PageMaker;
-import kr.kh.spring.pagination.PostCriteria;
 import kr.kh.spring.utils.UploadFileUtils;
 
 @Service
@@ -24,10 +24,10 @@ public class PostServiceImp implements PostService {
 
 	@Autowired
 	private PostDAO postDao;
-
+	
 	@Resource
 	private String uploadPath;
-	
+
 	@Override
 	public List<PostVO> getPostList(Criteria cri) {
 		return postDao.selectPostList(cri);
@@ -89,13 +89,12 @@ public class PostServiceImp implements PostService {
 		for(MultipartFile file : fileList) {
 			uploadFile(file, post.getPo_num());
 		}
-		
 		return true;
 	}
-	
+
 	private void uploadFile(MultipartFile file, int po_num) {
 		String fi_ori_name = file.getOriginalFilename();
-		//파일명이 없으면.
+		//파일명이 없으면
 		if(fi_ori_name == null || fi_ori_name.length() == 0) {
 			return;
 		}
@@ -107,7 +106,7 @@ public class PostServiceImp implements PostService {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public PostVO getPost(int po_num) {
 		return postDao.selectPost(po_num);
@@ -140,7 +139,7 @@ public class PostServiceImp implements PostService {
 		for(FileVO fileVo : fileList) {
 			deleteFile(fileVo);
 		}
-		
+		//db에서 해당 첨부파일을 삭제
 		return true;
 	}
 
@@ -150,6 +149,7 @@ public class PostServiceImp implements PostService {
 		}
 		//실제 첨부파일을 삭제
 		UploadFileUtils.deleteFile(uploadPath, fileVo.getFi_name());
+		
 		//db에서 해당 첨부파일을 삭제
 		postDao.deleteFile(fileVo.getFi_num());
 	}
@@ -180,6 +180,7 @@ public class PostServiceImp implements PostService {
 		if(fileList == null || fileList.length == 0) {
 			return true;
 		}
+		//새 첨부파일 추가
 		for(MultipartFile file : fileList) {
 			uploadFile(file, post.getPo_num());
 		}
@@ -187,7 +188,7 @@ public class PostServiceImp implements PostService {
 		if(delNums == null || delNums.length == 0) {
 			return true;
 		}
-		// x버튼 눌러서 제거한 첨부파일 제거
+		//x버튼 눌러서 제거한 첨부파일 제거
 		for(int fi_num : delNums) {
 			FileVO fileVo = postDao.selectFile(fi_num);
 			deleteFile(fileVo);
@@ -210,6 +211,55 @@ public class PostServiceImp implements PostService {
 	public PageMaker getPageMaker(Criteria cri) {
 		int totalCount = postDao.selectCountPostList(cri);
 		return new PageMaker(3, cri, totalCount);
+	}
+
+	@Override
+	public int updateLike(LikeVO like, MemberVO user) {
+		if(like == null || user == null) {
+			return -2;
+		}
+		
+		like.setLi_me_id(user.getMe_id());
+		//기존 추천 정보를 가져옴
+		LikeVO dbLike = postDao.selectLike(like);
+		System.out.println(dbLike);
+		//없으면 추가
+		if(dbLike == null) {
+			boolean res = postDao.insertLike(like);
+			if(!res) {
+				return -2;
+			}
+			return like.getLi_state();
+		}
+		//있으면 취소, 추천->비추천, 비추천->추천
+		//취소하는 경우,
+		if(dbLike.getLi_state() == like.getLi_state()) {
+			like.setLi_state(0);
+		}
+		
+		boolean res = postDao.updateLike(like);
+		if(!res) {
+			return -2;
+		}
+		return like.getLi_state();
+	}
+
+	@Override
+	public void updateUpDown(int po_num) {
+		postDao.updateUpDown(po_num);
+	}
+
+	@Override
+	public LikeVO getLike(int po_num, MemberVO user) {
+		if(user == null) {
+			return null;
+		}
+		
+		LikeVO like = new LikeVO();
+		like.setLi_me_id(user.getMe_id());
+		like.setLi_po_num(po_num);
+		
+		return postDao.selectLike(like);
 	}
 
 		
