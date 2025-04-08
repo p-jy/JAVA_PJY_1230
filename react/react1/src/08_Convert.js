@@ -13,10 +13,10 @@ function Convert() {
 	return(
 		<div>
 			<div>
-				<input type="text" onChange={(e)=>setAmount(e.target.value)} />
+				<input type="number" onChange={(e)=>setAmount(e.target.value)} />
 				<button onClick={convert} >변환</button>
 			</div>
-			<input type="number" readOnly value={res} />
+			<input type="number" disabled value={res} />
 		</div>
 	)
 }
