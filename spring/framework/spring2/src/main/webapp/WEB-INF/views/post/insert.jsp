@@ -41,12 +41,12 @@
 					<img class="sel-img" width="150" height="200">
 					<input type="file" class="form-control" name="fileList" accept="image/*">
 				</label>
-				<label class="file-label mr-3">
+				<label class="file-label  mr-3">
 					<span class="base-img">+</span>
 					<img class="sel-img" width="150" height="200">
 					<input type="file" class="form-control" name="fileList" accept="image/*">
 				</label>
-				<label class="file-label mr-3">
+				<label class="file-label  mr-3">
 					<span class="base-img">+</span>
 					<img class="sel-img" width="150" height="200">
 					<input type="file" class="form-control" name="fileList" accept="image/*">
@@ -69,6 +69,17 @@
 			}else{
 				$this.prev().hide();
 				$this.prevAll(".base-img").show();
+			}
+		});
+		$("form").submit(function(e){
+			//첨부파일이 1개이상인지 확인
+			let count = 0;
+			$("[name=fileList]").each(function(e){
+				count += this.files.length;
+			})
+			if(count == 0){
+				alert("이미지는 1개 이상 선택하세요.")
+				return false;
 			}
 		})
 	</script>

@@ -3,7 +3,10 @@ package kr.kh.spring2.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.spring2.model.vo.BoardVO;
 import kr.kh.spring2.model.vo.FileVO;
+import kr.kh.spring2.model.vo.MemberVO;
 import kr.kh.spring2.model.vo.PostVO;
 import kr.kh.spring2.pagination.PageMaker;
 import kr.kh.spring2.pagination.PostCriteria;
@@ -59,9 +64,24 @@ public class PostController {
 		model.addAttribute("list", list);
 		return "/post/detail";
 	}
+	
+	@Value("${file.location}")
+	String uploadPath;
+	
 	@GetMapping("/insert")
 	public String insert(Model model) {
-		
+		List<BoardVO> list = postService.getBoardList();
+		model.addAttribute("list", list);
 		return "/post/insert";
 	}
+	
+	@PostMapping("/insert")
+	public String insert(PostVO post, HttpSession session, MultipartFile[] fileList) {
+		MemberVO user = (MemberVO) session.getAttribute("user");
+		if(postService.insertPost(post, user, fileList)) {
+			return "redirect:/post/detail" + post.getPo_num();
+		}
+		return "redirect:/post/insert";
+	}
+	
 }

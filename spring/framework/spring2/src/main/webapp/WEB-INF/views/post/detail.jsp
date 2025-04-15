@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -6,8 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
 <body id="body">
 	
@@ -44,11 +43,23 @@
 					<label for="content" class="form-label">내용</label>
 					<div class="form-control" id="content" style="min-height: 400px;">${post.po_content }</div>
 				</div>
-				<div class="mb-3">
-					<c:forEach items="${list}" var="file">
-						<img alt="첨부파일" width="100" height="120" src="<c:url value="/download${file.fi_name }"/>">
-					</c:forEach>
-				</div>
+				<c:if test="${list.size() != 0 }">
+					<div class="mb-3">
+						<!-- Swiper -->
+						<div class="swiper mySwiper">
+						  <div class="swiper-wrapper">
+						  	<c:forEach items="${list}" var="file">
+							    <div class="swiper-slide" style="background: #fff; text-align: center;">
+									<img alt="첨부파일" width="100" height="120" src="<c:url value="/download${file.fi_name }"/>">
+							    </div>
+							</c:forEach>
+						  </div>
+						  <div class="swiper-button-next"></div>
+						  <div class="swiper-button-prev"></div>
+						  <div class="swiper-pagination"></div>
+						</div>
+					</div>
+				</c:if>
 			</div>
 		</c:when>
 		<c:otherwise>
@@ -64,5 +75,19 @@
 			</div>
 		</c:if>
 	</div>
+	<script>
+		var swiper = new Swiper(".mySwiper", {
+		  spaceBetween: 30,
+		  effect: "fade",
+		  navigation: {
+		    nextEl: ".swiper-button-next",
+		    prevEl: ".swiper-button-prev",
+		  },
+		  pagination: {
+		    el: ".swiper-pagination",
+		    clickable: true,
+		  },
+		});
+	</script>
 </body>
 </html>
