@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import kr.kh.spring2.model.vo.BoardVO;
+import kr.kh.spring2.model.vo.FileVO;
 import kr.kh.spring2.model.vo.PostVO;
 import kr.kh.spring2.pagination.PageMaker;
 import kr.kh.spring2.pagination.PostCriteria;
@@ -52,9 +53,15 @@ public class PostController {
 		//게시글 번호에 맞는 게시글을 가져오라고 서비스에게 시킴
 		PostVO post = postService.getPost(po_num);
 		//게시글 번호에 맞는 첨부파일들을 가져오라고 서비스에게 시킴
-		
+		List<FileVO> list = postService.getFileList(po_num);
 		//화면에 전달
 		model.addAttribute("post", post);
+		model.addAttribute("list", list);
 		return "/post/detail";
+	}
+	@GetMapping("/insert")
+	public String insert(Model model) {
+		
+		return "/post/insert";
 	}
 }
