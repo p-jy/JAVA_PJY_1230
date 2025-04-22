@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = "kr.kh.boot")
 public class WebMvcConfig implements WebMvcConfigurer{
 	
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler(...pathPatterns:"/file").addResourceLocations(...locations:"file:///D:/uploads/");
+	public void addResourceHandlers(ResourceHandlerRegistry registry){
+		registry.addResourceHandler("/file/**").addResourceLocations("file:///D:/uploads/");
 	}
 }

@@ -16,6 +16,9 @@
 			<a th:href="@{/post/list/0}" class="btn btn-outline-success mr-2">전체</a>
 			<a th:each="board : ${boardList}" th:text="${board.bo_name}" th:href="@{/post/list/{num}(num=${board.bo_num})}" class="btn btn-outline-success mr-2"></a>
 		</div>
+		<div>
+			<a th:href="@{/post/insert}" class="btn btn-outline-success mb-2">게시글 등록</a>
+		</div>
 		<table class="table table-bordered table-hover">
 			<thead>
 				<tr>
@@ -30,7 +33,9 @@
 			<tbody>
 				<tr th:each="post : ${list}">
 					<td th:text="${post.po_num}">1</td>
-					<td th:text="${post.po_title}">제목</td>
+					<td>
+						<a th:href="@{/post/detail/{num}(num=${post.po_num})}" th:text="${post.po_title}"></a>
+					</td>
 					<td th:text="${post.po_me_id}">작성자</td>
 					<td th:text="${post.po_date}">작성일</td>
 					<td th:text="${post.po_view}">조회수</td>
