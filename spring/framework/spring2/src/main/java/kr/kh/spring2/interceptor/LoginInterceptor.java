@@ -1,4 +1,3 @@
-
 package kr.kh.spring2.interceptor;
 
 import java.util.Date;
@@ -48,7 +47,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 		Cookie cookie = new Cookie("LC", session.getId());
 		cookie.setPath("/");
 		cookie.setMaxAge(second);
-
+		
 		//생성된 쿠키를 클라이언트에 전송
 		response.addCookie(cookie);
 		
