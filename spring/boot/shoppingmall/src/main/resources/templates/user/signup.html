@@ -9,10 +9,11 @@ layout:decorate="~{layout/layout.html}">
 <style>
 	.box input:focus{outline: 0; box-shadow: none; z-index: 10;}
 	.box input+input{margin-top: -1px;}
-	.box input:first-of-type{border-radius: 5px 5px 0 0 !important;}
-	.box input:last-of-type{border-radius: 0 0 5px 5px !important;}
+	.box input:first-of-type{ border-radius: 5px 5px 0 0 !important;}
+	.box input:last-of-type{ border-radius: 0 0 5px 5px !important;}
 	.error{color: red;}
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
 </head>
@@ -21,11 +22,16 @@ layout:decorate="~{layout/layout.html}">
 		<h1 class="mt-3">회원가입</h1>
 		<form th:action="@{/signup}" method="post" id="signup-form">
 			<div class="d-flex flex-column mt-3 mb-3 form-group box">
-				<input type="text" name="me_id" class="form-control rounded-0" placeholder="아이디">
-				<input type="password" name="me_pw" id="me_pw" class="form-control rounded-0" placeholder="비번">
-				<input type="password" name="me_pw2" class="form-control rounded-0" placeholder="비번 확인">
+				<input type="text" name="me_id" 
+					class="form-control rounded-0"
+					placeholder="아이디">
+				<input type="password" name="me_pw" id="me_pw" 
+					class="form-control rounded-0 "
+					placeholder="비번">
+				<input type="password" name="me_pw2"
+					class="form-control rounded-0 "
+					placeholder="비번 확인">
 			</div>
-
 			<div>
 				<label for="me_id" id="me_id-error" class="error d-block"></label>
 				<label for="me_pw" id="me_pw-error" class="error d-block"></label>
@@ -33,16 +39,18 @@ layout:decorate="~{layout/layout.html}">
 			</div>
 
 			<div class="d-flex flex-column mt-3 mb-3 form-group box">
-				<input type="email" name="me_email" class="form-control rounded-0" placeholder="이메일">
-				<input type="text" name="me_number" class="form-control rounded-0" placeholder="전화번호(예:010-1234-5678)">
+				<input type="email" name="me_email" 
+					class="form-control rounded-0"
+					placeholder="이메일">
+				<input type="text" name="me_number"
+					class="form-control rounded-0 "
+					placeholder="전화번호(예:010-1234-5678)">
 			</div>
-			
 			<div>
 				<label for="me_email" id="me_email-error" class="error d-block"></label>
-				<label for="me_phone" id="me_phone-error" class="error d-block"></label>
+				<label for="me_number" id="me_number-error" class="error d-block"></label>
 			</div>
-
-			<button class="btn btn-success col-12">회원가입</button>
+			<button class="btn btn-success col-12 mb-3">회원 가입</button>
 		</form>
 		<script>
 			$("#signup-form").validate({
@@ -70,22 +78,22 @@ layout:decorate="~{layout/layout.html}">
 				messages : {
 					me_id : {
 						required : "·아이디는 필수 항목입니다.",
-						regex : "·아이디는 영어, 숫자로 이루어져 있으며, 3~12자 입니다."
+						regex : "·아이디는 영어, 숫자로 이루어져 있으며, 3~12자입니다."
 					},
 					me_pw : {
 						required : "·비번은 필수 항목입니다.",
-						regex : "·비번은 영어, 숫자, 특수문자(!@#$)로 이루어져 있으며, 3~12자 입니다."
+						regex : "·비번은 영어, 숫자, 특수문자(!@#$)로 이루어져 있으며, 3~12자입니다."
 					},
 					me_pw2 : {
-						equalTo : "·비번과 비번 확인이 일치하지 않습니다."
+						equalTo : "·비번과 비번 확인이 같지 않습니다."
 					},
 					me_email : {
 						required : "·이메일은 필수 항목입니다.",
-						email : "·이메일 형식이 아닙니다."
+						email : "·이메일 형식에 맞지 않습니다."
 					},
 					me_number : {
 						required : "·전화번호는 필수 항목입니다.",
-						phone : "·전화번호 형식이 아닙니다. (예:010-1234-5678)"
+						phone : "·전화번호 형식에 맞지 않습니다.(예:010-1234-5678)"
 					}
 				},
 				submitHandler : function(){
@@ -98,7 +106,7 @@ layout:decorate="~{layout/layout.html}">
 			}, "정규 표현식을 확인하세요.");
 			$.validator.addMethod("phone", function(value, element){
 				return this.optional(element) || /^0\d{1,2}-\d{3,4}-\d{4}$/.test(value);
-			}, "전화번호 형식이 아닙니다. (예:010-1234-5678)");
+			}, "전화번호 형식에 맞지 않습니다.(예:010-1234-5678)");
 		</script>
 	</main>
 </body>

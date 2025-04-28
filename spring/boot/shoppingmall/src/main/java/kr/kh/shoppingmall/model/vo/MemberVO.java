@@ -1,3 +1,4 @@
+
 package kr.kh.shoppingmall.model.vo;
 
 import lombok.Data;
