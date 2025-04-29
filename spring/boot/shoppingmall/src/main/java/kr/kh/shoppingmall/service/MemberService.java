@@ -41,12 +41,19 @@ public class MemberService {
 		//비번 암호화
 		String encPw = passwordEncoder.encode(member.getMe_pw());
 		member.setMe_pw(encPw);
+		//가입된 아이디 확인
+		if(memberDAO.selectMember(member.getMe_id()) != null)	{
+			return false;
+		}
 		try{
 			return memberDAO.insertMember(member);
 		}catch(Exception e){
-			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public boolean checkId(String id) {
+		return memberDAO.selectMember(id) == null;
 	}
 
 }
