@@ -1,112 +1,77 @@
-package kr.kh.shoppingmall.service;
+package kr.kh.shoppingmall.utils;
 
-import java.util.List;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.FileCopyUtils;
 
-import kr.kh.shoppingmall.dao.ProductDAO;
-import kr.kh.shoppingmall.model.vo.CategoryVO;
-import kr.kh.shoppingmall.model.vo.ProductVO;
-import kr.kh.shoppingmall.utils.UploadFileUtils;
-
-@Service
-public class ProductService {
-
-	@Autowired
-	ProductDAO productDAO;
-
-	@Value("${spring.path.upload}")
-	String uploadPath;
-
-	public List<CategoryVO> getCategory() {
-		return productDAO.selectCategoryList();
+public class UploadFileUtils {
+	//지정 폴더에 년/월/일 폴더를 생성 후 파일을 업로드
+	public static String uploadFile(String uploadPath, String originalName, byte[]
+				fileData)throws Exception{
+		UUID uid = UUID.randomUUID();
+		String savedName = uid.toString() +"_" + originalName;
+		String savedPath = calcPath(uploadPath);
+		File target = new File(uploadPath + savedPath, savedName);
+		FileCopyUtils.copy(fileData, target);
+		String uploadFileName = getFileName(savedPath, savedName);
+		return uploadFileName;
 	}
 
-	public String insertCategory(CategoryVO category) {
-		if(category == null){
-			return "넘어온 정보가 없습니다.";
-		}
-		CategoryVO dbCategory = productDAO.selectCategoryByName(category.getCa_name());
-		if(dbCategory != null){
-			return "중복된 카테고리명입니다.";
-		}
-		dbCategory = productDAO.selectCategoryByCode(category.getCa_code());
-		if(dbCategory != null){
-			return "중복된 카테고리코드입니다.";
-		}
-		productDAO.insertCategory(category);
-		return "카테고리를 등록했습니다.";
-	}
-	
-	public String updateCategory(CategoryVO category) {
-		if(category == null){
-			return "넘어온 정보가 없습니다.";
-		}
-		CategoryVO dbCategory = productDAO.selectCategoryByName(category.getCa_name());
-		if(dbCategory != null ){
-			return "중복된 카테고리명입니다.";
-		}
-		if(productDAO.updateCategory(category)){
-			return "카테고리를 수정했습니다.";
-		}
-		return "카테고리를 수정하지 못했습니다.";
-	}
+	private static String calcPath(String uploadPath) {
+		Calendar cal = Calendar.getInstance();
 
-	public String deleteCategory(int ca_num) {
-		try{
-			if(productDAO.deleteCategory(ca_num)){
-				return "카테고리를 삭제했습니다.";
-			}
-			return "카테고리를 삭제하지 못했습니다.";
-		}catch(Exception e){
-			return "제품이 등록된 카테고리는 삭제할 수 없습니다.";
-		}
-	}
+		String yearPath = File.separator+cal.get(Calendar.YEAR);
+		String monthPath = yearPath + File.separator
+				+ new DecimalFormat("00").format(cal.get(Calendar.MONTH)+1);
+		String datePath = monthPath + File.separator
+				+ new DecimalFormat("00").format(cal.get(Calendar.DATE));
+		makeDir(uploadPath, yearPath, monthPath, datePath);
 
-	public List<ProductVO> getProductList(int ca_num) {
-		return productDAO.selectProductList(ca_num);
-	}
+		return datePath;
 
-	public boolean insertProduct(ProductVO product, MultipartFile thumb) {
-		if(product == null || thumb == null || thumb.getOriginalFilename().isEmpty()){
-			return false;
-		}
-		String pr_code = productDAO.selectNextPrCode(product.getPr_ca_num());
-		product.setPr_code(pr_code);
-		boolean res = productDAO.insertProduct(product);
-		if(!res){
-			return false;
-		}
-		//썸네일 작업
-		String fileName = thumb.getOriginalFilename();
-		String suffix = getSuffix(fileName);
-		String newFileName = product.getPr_code() + suffix;
-		String thumbnail;
-		try {
-			thumbnail = UploadFileUtils.uploadFile(uploadPath, newFileName, thumb.getBytes(),"product");
-			product.setPr_thumb(thumbnail);
-			productDAO.updateProduct(product);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return true;
 	}
-
-	private String getSuffix(String fileName) {
-		
-		int index = fileName.lastIndexOf(".");
-		return index < 0 ? null : fileName.substring(index);
-	}
-
-	public void deleteProduct(String pr_code) {
-		ProductVO product = productDAO.selectProduct(pr_code);
-		if(product == null){
+	private static void makeDir(String uploadPath, String... paths) {
+		if(new File(uploadPath + paths[paths.length-1]).exists())
 			return;
+		for(String path : paths) {
+			File dirPath = new File(uploadPath + path);
+			if( !dirPath.exists())
+				dirPath.mkdir();
 		}
-		product.setPr_del("Y");
-		productDAO.updateProduct(product);
+	}
+	private static String getFileName(String path, String fileName)
+			throws Exception{
+		String iconName = path + File.separator + fileName;
+		return iconName.replace(File.separatorChar, '/');
+	}
+	public static void deleteFile(String uploadPath, String fi_name) {
+		fi_name = fi_name.replace('/', File.separatorChar);
+		File file = new File(uploadPath + fi_name);
+		//파일이 존재하면 파일을 삭제
+		if(file.exists()) {
+				file.delete();
+		}
+	}
+	//지정 폴더에 폴더들을 추가하여 파일을 업로드
+	public static String uploadFile(String uploadPath, String originalName, byte[]
+			fileData, String ... paths)throws Exception{
+		String savedPath = calcPath(uploadPath, paths);
+		File target = new File(uploadPath + savedPath, originalName);
+		FileCopyUtils.copy(fileData, target);
+		String uploadFileName = getFileName(savedPath, originalName);
+		return uploadFileName;
+	}
+	/**
+	 * uploadPath안에 paths폴더들을 생성하여 생성된 최하위 폴더 경로를 반환하는 메소드
+	 * @param uploadPath 폴더가 생성될 위치
+	 * @param paths 생성할 폴더들로 앞의 폴더가 상위 폴더
+	 * @return 생성된 최 하위 폴더
+	 */
+	private static String calcPath(String uploadPath, String... paths) {
+		makeDir(uploadPath, paths);
+		return paths[paths.length-1];
 	}
 }
