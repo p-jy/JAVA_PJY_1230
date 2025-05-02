@@ -238,4 +238,24 @@ public class ProductService {
 		dbCart.setCt_amount(cart.getCt_amount());
 		return productDAO.updateCart(dbCart);
 	}
+
+	public List<CartVO> getCartList(CustomUser customUser) {
+		if(customUser == null){
+			return null;
+		}
+		return productDAO.selectCartList(customUser.getUsername());
+	}
+
+	public String updateCart(CartVO cart, CustomUser customUser) {
+		if(cart == null || customUser == null) {
+			return "장바구니 변경에 실패했습니다.";
+		}
+		String id = customUser.getUsername();
+		cart.setCt_me_id(id);
+		CartVO dbCart = productDAO.selectCart(cart);
+		ProductVO product = productDAO.selectProduct(cart.getCt_pr_code());
+		if(product.getPr_amount() < cart.getCt_amount()) {
+			return "현재 재고량은 " + product.getPr_amount() + "개 입니다.";
+		}
+	}
 }

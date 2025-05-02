@@ -34,7 +34,7 @@ layout:decorate="~{layout/layout.html}">
 							</div>
 						</div>
 					</form>
-				</div>				
+				</div>
 			</div>
 			<div class="product-body my-3 " th:utext="${product.pr_content}">내용</div>
 		</div>
@@ -110,7 +110,7 @@ layout:decorate="~{layout/layout.html}">
 					alert(`재고량은 ${maxAmount}개 입니다.`);
 					curAmount = maxAmount;
 				}
-			
+
 				$("#amount").val(curAmount);
 			});
 			function getAmount(code){
