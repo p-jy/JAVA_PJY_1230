@@ -56,8 +56,8 @@ layout:decorate="~{layout/layout.html}">
 		</div>
 		<script>
 			$(".btn-complete").click(function(){
-				let num = $(this).data("num");
-				let $this = $(this).data("num");
+				let num = $this.data("num");
+				let $this = $(this);
 				$.ajax({
 					async: true,
 					url: "/product/final/complete",

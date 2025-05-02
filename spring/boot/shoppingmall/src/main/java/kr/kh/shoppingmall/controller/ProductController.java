@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import kr.kh.shoppingmall.model.vo.BuyVO;
+import kr.kh.shoppingmall.model.vo.CartVO;
 import kr.kh.shoppingmall.model.vo.ProductVO;
 import kr.kh.shoppingmall.service.ProductService;
 import kr.kh.shoppingmall.utils.CustomUser;
@@ -73,6 +74,12 @@ public class ProductController {
 	@ResponseBody
 	public boolean productFinalComplete(@RequestParam int num, @AuthenticationPrincipal CustomUser customUser) {
 		return productService.updateBuy(num, customUser);
+	}
+	
+	@PostMapping("/cart/insert")
+	@ResponseBody
+	public boolean cartInsert(@RequestBody CartVO cart, @AuthenticationPrincipal CustomUser customUser) {
+		return productService.insertCart(cart, customUser);
 	}
 	
 	

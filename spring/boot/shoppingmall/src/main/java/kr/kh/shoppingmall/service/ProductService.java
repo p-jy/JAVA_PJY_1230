@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.kh.shoppingmall.dao.ProductDAO;
 import kr.kh.shoppingmall.model.vo.BuyListVO;
 import kr.kh.shoppingmall.model.vo.BuyVO;
+import kr.kh.shoppingmall.model.vo.CartVO;
 import kr.kh.shoppingmall.model.vo.CategoryVO;
 import kr.kh.shoppingmall.model.vo.ProductVO;
 import kr.kh.shoppingmall.utils.CustomUser;
@@ -218,9 +219,23 @@ public class ProductService {
 	}
 
 	public boolean updateBuy(int num, CustomUser customUser) {
-		if(customUser == null) {
+		if(customUser == null){
 			return false;
 		}
 		return productDAO.updateBuy(num, customUser.getUsername());
+	}
+
+	public boolean insertCart(CartVO cart, CustomUser customUser) {
+		if(customUser == null || cart == null){
+			return false;
+		}
+		cart.setCt_me_id(customUser.getUsername());
+
+		CartVO dbCart = productDAO.selectCart(cart);
+		if(dbCart == null){
+			return productDAO.insertCart(cart);
+		}
+		dbCart.setCt_amount(cart.getCt_amount());
+		return productDAO.updateCart(dbCart);
 	}
 }
