@@ -90,8 +90,9 @@ public class ProductController {
 	}
 	@PostMapping("/cart/update")
 	@ResponseBody
-	public String cartUpdate(@RequestBody CartVO cart, @AuthenticationPrincipal CustomUser customUser) {
+	public String cartUPdate(@RequestBody CartVO cart, @AuthenticationPrincipal CustomUser customUser) {
 		return productService.updateCart(cart, customUser);
-	} 
+	}
+	
 	
 }
